@@ -9,6 +9,7 @@ import {
 import { PublicKey, SystemProgram, Connection } from "@solana/web3.js";
 import { assert } from "chai";
 import { confirmTransaction } from "@solana-developers/helpers";
+import { Big } from "@switchboard-xyz/common";
 
 const SOL_USD_SWITCHBOARD_FEED = new PublicKey(
   "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR",
@@ -78,14 +79,14 @@ describe("burry-escrow", () => {
   }
 
   it("creates Burry Escrow Below Current Price", async () => {
-    const solPrice: BigInt | null = await aggregatorAccount.fetchLatestValue();
+    const solPrice: Big | null = await aggregatorAccount.fetchLatestValue();
     if (solPrice === null) {
       throw new Error("Aggregator holds no value");
     }
     // Although `SOL_USD_SWITCHBOARD_FEED` is not changing we are changing the unlockPrice in test as given below to simulate the escrow behaviour
-    // const unlockPrice = solPrice.minus(PRICE_OFFSET).toNumber();
+    const unlockPrice = solPrice.minus(PRICE_OFFSET).toNumber();
     // const unlockPrice = solPrice.toString(PRICE_OFFSET);
  
-    // await createAndVerifyEscrow(unlockPrice);
+    await createAndVerifyEscrow(unlockPrice);
   });
 });
